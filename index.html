@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sudoku Solver</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            margin: 20px auto;
+        }
+        td {
+            border: 1px solid black;
+            width: 40px;
+            height: 40px;
+            text-align: center;
+        }
+        input {
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            border: none;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sudoku Solver</h1>
+    <form id="sudoku-form">
+        <table>
+            <tbody>
+                <!-- Generate a 9x9 grid -->
+                <script>
+                    document.write(Array.from({length: 9}, (_, row) =>
+                        `<tr>${Array.from({length: 9}, (_, col) =>
+                            `<td><input type="text" id="cell_${row}_${col}" maxlength="1"></td>`
+                        ).join('')}</tr>`
+                    ).join(''));
+                </script>
+            </tbody>
+        </table>
+        <button type="button" onclick="solveSudoku()">Solve Sudoku</button>
+    </form>
+    <h2>Solution:</h2>
+    <table id="solution-table">
+        <tbody>
+            <!-- Solution will be displayed here -->
+        </tbody>
+    </table>
+
+    <script>
+        function solveSudoku() {
+            // Collect the puzzle from the input fields
+            let puzzle = [];
+            for (let row = 0; row < 9; row++) {
+                for (let col = 0; col < 9; col++) {
+                    let value = document.getElementById(`cell_${row}_${col}`).value;
+                    puzzle.push(value ? parseInt(value) : 0);
+                }
+            }
+
+            // For demo purposes, let's use a mock solver
+            let solution = solve(puzzle); // Replace with actual solver logic
+
+            // Display the solution
+            let solutionTable = document.getElementById('solution-table');
+            solutionTable.innerHTML = '';
+            for (let row = 0; row < 9; row++) {
+                let tr = document.createElement('tr');
+                for (let col = 0; col < 9; col++) {
+                    let td = document.createElement('td');
+                    td.textContent = solution[row * 9 + col] || '';
+                    tr.appendChild(td);
+                }
+                solutionTable.appendChild(tr);
+            }
+        }
+
+        function solve(puzzle) {
+            // Mock solver: Just returns the input puzzle for demonstration
+            return puzzle;
+        }
+    </script>
+</body>
+</html>
