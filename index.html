@@ -51,7 +51,9 @@
             border-top: 2px solid black;
             border-right: 2px solid black;
         }
-        
+        input:valid{
+            background-color: lightgrey;
+        }
     </style>
 </head>
 <body>
@@ -70,7 +72,7 @@
                             if (col % 3 === 0) className += '-thick-col';
                             if (col === 8) className += '-right-most';
                             if (row === 8) className += '-bottom-most';
-                            html += `<td class="${className}"><input type="text" id="cell_${row}_${col}" maxlength="1"></td>`;
+                            html += `<td class="${className}"><input type="text" id="cell_${row}_${col}" maxlength="1" required></td>`;
                         }
                         html += '</tr>';
                     }
@@ -89,6 +91,7 @@
 
     <script>
         let solutionBoard = null; 
+        let inputPuzzle = Array(9).fill(null).map(() => Array(9).fill(0)); // Global variable to store the input board
 
         function isValid(board, row, col, num) {
             // Check the row
@@ -119,6 +122,10 @@
             return true;
         }
 
+        function deepCopyBoard(board) {
+            return board.map(row => row.slice());
+        }
+        
         function solveTheSudoku(board) {
             for (let row = 0; row < 9; row++) {
                 for (let col = 0; col < 9; col++) {
@@ -126,13 +133,11 @@
                         for (let num = 1; num <= 9; num++) {  // Try digits 1-9
                             if (isValid(board, row, col, num)) {
                                 board[row][col] = num;
-                                console.log(`Trying ${num} at (${row}, ${col})`);
                                 const [solved, solution] = solveTheSudoku(board);
                                 if (solved) {
                                     return [true, solution];
                                 }
                                 board[row][col] = 0;  // Backtrack
-                                console.log(`Backtracking from (${row}, ${col})`);
                             }
                         }
                         return [false, null];  // Trigger backtracking
@@ -158,7 +163,11 @@
                         td.setAttribute("data-row", row);
                         td.setAttribute("data-col", col);
                         td.className = className;
-                        if (reveal) {
+                        if (inputPuzzle[row][col] != 0) {
+                            td.textContent = inputPuzzle[row][col];
+                            td.setAttribute('bgcolor', 'lightgrey')
+                        }
+                        else if (reveal) {
                             td.textContent = solutionBoard[row][col]
                         }
                         else {
@@ -175,32 +184,38 @@
                 }
             document.getElementById('solution-table').scrollIntoView({behavior: 'smooth'});
         }
+        
+        function addButton(){
+            let solution_span = document.getElementById('solution-span');
+            button = document.createElement('button');
+            button.setAttribute('type', 'button');
+            button.setAttribute('id', 'reveal-button');
+            button.onclick = function() {displaySolution(reveal=true)};
+            button.textContent = "Reveal all";
+            solution_span.appendChild(button);
+        }
+
+        function updateBoard() {
+            // Update the inputBoard array based on input values
+            for (let row = 0; row < 9; row++) {
+                for (let col = 0; col < 9; col++) {
+                    let value = document.getElementById(`cell_${row}_${col}`).value;
+                    inputPuzzle[row][col] = value ? parseInt(value) : 0;
+                }
+            }
+        }
 
         function solveSudoku() {
             // button
             if (!document.getElementById('reveal-button')) {
-                let solution_span = document.getElementById('solution-span');
-                button = document.createElement('button');
-                button.setAttribute('type', 'button');
-                button.setAttribute('id', 'reveal-button');
-                button.onclick = function() {displaySolution(reveal=true)};
-                button.textContent = "Reveal all";
-                solution_span.appendChild(button);
+                addButton();
             };
             
             // Collect the puzzle from the input fields
-            let board = [];
-            for (let row = 0; row < 9; row++) {
-                let rowArray = [];
-                for (let col = 0; col < 9; col++) {
-                    let value = document.getElementById(`cell_${row}_${col}`).value;
-                    rowArray.push(value ? parseInt(value) : 0);
-                }
-                board.push(rowArray);
-            }
+            updateBoard();
 
             // Solve the Sudoku puzzle
-            const [solved, solution] = solveTheSudoku(board);
+            const [solved, solution] = solveTheSudoku(deepCopyBoard(inputPuzzle));
 
             // Display the solution
             if (solved) {
