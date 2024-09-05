@@ -23,11 +23,11 @@
             font-size: 18px;
             box-sizing: border-box;
         }
-        .thick-border {
-            border: 2px solid black;
+        .thick-col {
+            border-left: 2px solid black;
         }
         .thick-row {
-            border-bottom: 2px solid black;
+            border-top: 2px solid black;
         }
     </style>
 </head>
@@ -43,8 +43,8 @@
                         html += '<tr>';
                         for (let col = 0; col < 9; col++) {
                             let className = '';
-                            if (col % 3 === 0) className += 'thick-border';
-                            if (row % 3 === 0 && col === 0) className += ' thick-row';
+                            if (col % 3 === 0) className += 'thick-col';
+                            if (row % 3 === 0) className += ' thick-row';
                             html += `<td class="${className}"><input type="text" id="cell_${row}_${col}" maxlength="1"></td>`;
                         }
                         html += '</tr>';
