@@ -88,6 +88,8 @@
     </table>
 
     <script>
+        let solutionBoard = null; 
+
         function isValid(board, row, col, num) {
             // Check the row
             for (let i = 0; i < 9; i++) {
@@ -140,6 +142,34 @@
             return [true, board];  // All cells are filled correctly
         }
 
+        function displaySolution(solution){
+            let solutionTable = document.getElementById('solution-table');
+            solutionTable.innerHTML = '';
+            for (let row = 0; row < 9; row++) {
+                    let tr = document.createElement('tr');
+                    for (let col = 0; col < 9; col++) {
+                        let className = '';
+                        if (row % 3 === 0) className += '-thick-row';
+                        if (col % 3 === 0) className += '-thick-col';
+                        if (col === 8) className += '-right-most';
+                        if (row === 8) className += '-bottom-most';
+
+                        let td = document.createElement('td');
+                        td.setAttribute("data-row", row);
+                        td.setAttribute("data-col", col);
+                        td.textContent = '';
+                        td.className = className;
+                        td.onclick = function(){
+                            let row = this.getAttribute("data-row");
+                            let col = this.getAttribute("data-col");
+                            this.textContent = solution[row][col];
+                        };
+                        tr.appendChild(td);
+                    }
+                    solutionTable.appendChild(tr);
+                }
+        }
+
         function solveSudoku() {
             // Collect the puzzle from the input fields
             let board = [];
@@ -156,27 +186,12 @@
             const [solved, solution] = solveTheSudoku(board);
 
             // Display the solution
-            let solutionTable = document.getElementById('solution-table');
-            solutionTable.innerHTML = '';
             if (solved) {
-                for (let row = 0; row < 9; row++) {
-                    let tr = document.createElement('tr');
-                    for (let col = 0; col < 9; col++) {
-                        let className = '';
-                        if (row % 3 === 0) className += '-thick-row';
-                        if (col % 3 === 0) className += '-thick-col';
-                        if (col === 8) className += '-right-most';
-                        if (row === 8) className += '-bottom-most';
-
-                        let td = document.createElement('td');
-                        td.textContent = solution[row][col] || '';
-                        td.className = className;
-                        tr.appendChild(td);
-                    }
-                    solutionTable.appendChild(tr);
-                }
+                solutionBoard = solution;
+                displaySolution(solution);
             } else {
-                solutionTable.innerHTML = '<tr><td colspan="9">No solution found.</td></tr>';
+                alert('No solution found.');
+                document.getElementById('solution-table').innerHTML = '<tr><td colspan="9">No solution found.</td></tr>';
             }
         }
     </script>
