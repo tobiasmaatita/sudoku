@@ -178,13 +178,16 @@
 
         function solveSudoku() {
             // button
-            let solution_span = document.getElementById('solution-span');
-            button = document.createElement('button');
-            button.setAttribute('type', 'button');
-            button.onclick = function() {displaySolution(reveal=true)}
-            button.textContent = "Reveal all"
-            solution_span.appendChild(button)
-
+            if (!document.getElementById('reveal-button')) {
+                let solution_span = document.getElementById('solution-span');
+                button = document.createElement('button');
+                button.setAttribute('type', 'button');
+                button.setAttribute('id', 'reveal-button');
+                button.onclick = function() {displaySolution(reveal=true)};
+                button.textContent = "Reveal all";
+                solution_span.appendChild(button);
+            };
+            
             // Collect the puzzle from the input fields
             let board = [];
             for (let row = 0; row < 9; row++) {
