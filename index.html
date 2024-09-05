@@ -5,15 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sudoku Solver</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+        }
         table {
             border-collapse: collapse;
-            margin: 20px auto;
+            margin: 0 auto;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
         }
         td {
             border: 1px solid #999;
             width: 40px;
             height: 40px;
             text-align: center;
+            position: relative;
         }
         input {
             width: 100%;
@@ -22,6 +31,7 @@
             border: none;
             font-size: 18px;
             box-sizing: border-box;
+            border-radius: 5px;
         }
         .-thick-col {
             border-left: 2px solid black;
@@ -53,6 +63,40 @@
         }
         input:valid{
             background-color: lightgrey;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        h1, h2 {
+            color: #007bff;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            margin-top: 30px;
+        }
+        #solution-table td {
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        #solution-table td:hover {
+            background-color: #f1f1f1;
         }
     </style>
 </head>
