@@ -88,41 +88,6 @@
     </table>
 
     <script>
-        function solveSudoku() {
-            // Collect the puzzle from the input fields
-            let puzzle = [];
-            for (let row = 0; row < 9; row++) {
-                for (let col = 0; col < 9; col++) {
-                    let value = document.getElementById(`cell_${row}_${col}`).value;
-                    puzzle.push(value ? parseInt(value) : 0);
-                }
-            }
-            console.log("PUZZLE")
-            console.log(puzzle)
-            // For demo purposes, let's use a mock solver
-            let solution = solve(puzzle); // Replace with actual solver logic
-            console.log("SOLUTION")
-            console.log(solution)
-            // Display the solution
-            let solutionTable = document.getElementById('solution-table');
-            solutionTable.innerHTML = '';
-            for (let row = 0; row < 9; row++) {
-                let tr = document.createElement('tr');
-                for (let col = 0; col < 9; col++) {
-                    let td = document.createElement('td');
-                    td.textContent = solution[row * 9 + col] || '';
-                    tr.appendChild(td);
-                }
-                solutionTable.appendChild(tr);
-            }
-        }
-
-        function solve(puzzle) {
-            const [solved, solution] = solveTheSudoku(puzzle)
-            return solution;
-        }
-
-        // Check if it's valid to place the number `num` at board[row][col]
         function isValid(board, row, col, num) {
             // Check the row
             for (let i = 0; i < 9; i++) {
@@ -152,8 +117,7 @@
             return true;
         }
 
-        // Solve the Sudoku using backtracking
-        function solveTheSudoku(board) {
+        function solveSudoku(board) {
             for (let row = 0; row < 9; row++) {
                 for (let col = 0; col < 9; col++) {
                     if (board[row][col] === 0) {  // Empty cell found
@@ -174,6 +138,38 @@
             return [true, board];  // All cells are filled correctly
         }
 
+        function solveSudoku() {
+            // Collect the puzzle from the input fields
+            let board = [];
+            for (let row = 0; row < 9; row++) {
+                let rowArray = [];
+                for (let col = 0; col < 9; col++) {
+                    let value = document.getElementById(`cell_${row}_${col}`).value;
+                    rowArray.push(value ? parseInt(value) : 0);
+                }
+                board.push(rowArray);
+            }
+
+            // Solve the Sudoku puzzle
+            const [solved, solution] = solveSudoku(board);
+
+            // Display the solution
+            let solutionTable = document.getElementById('solution-table');
+            solutionTable.innerHTML = '';
+            if (solved) {
+                for (let row = 0; row < 9; row++) {
+                    let tr = document.createElement('tr');
+                    for (let col = 0; col < 9; col++) {
+                        let td = document.createElement('td');
+                        td.textContent = solution[row][col] || '';
+                        tr.appendChild(td);
+                    }
+                    solutionTable.appendChild(tr);
+                }
+            } else {
+                solutionTable.innerHTML = '<tr><td colspan="9">No solution found.</td></tr>';
+            }
+        }
     </script>
 </body>
 </html>
