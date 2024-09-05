@@ -23,18 +23,27 @@
             font-size: 18px;
             box-sizing: border-box;
         }
-        .thick-col {
+        .-thick-col {
             border-left: 2px solid black;
         }
-        .thick-row {
+        .-thick-row {
             border-top: 2px solid black;
         }
-        .right-most {
+        .-right-most {
             border-right: 2px solid black;
         }
-        .bottom-most {
+        .-bottom-most {
             border-bottom: 2px solid black;
         }
+        .-right-most-bottom-most {
+            border-bottom: 2px solid black;
+            border-right: 2px solid black;
+        }
+        .-thick-col-bottom-most {
+            border-bottom: 2px solid black;
+            border-left: 2px solid black;
+        }
+        
     </style>
 </head>
 <body>
@@ -49,10 +58,10 @@
                         html += '<tr>';
                         for (let col = 0; col < 9; col++) {
                             let className = '';
-                            if (col % 3 === 0) className += 'thick-col';
-                            if (col === 8) className += 'right-most';
-                            if (row === 8) className += 'bottom-most';
-                            // if (row % 3 === 0) className += 'thick-row';
+                            if (row % 3 === 0) className += '-thick-row';
+                            if (col % 3 === 0) className += '-thick-col';
+                            if (col === 8) className += '-right-most';
+                            if (row === 8) className += '-bottom-most';
                             html += `<td class="${className}"><input type="text" id="cell_${row}_${col}" maxlength="1"></td>`;
                         }
                         html += '</tr>';
