@@ -97,10 +97,12 @@
                     puzzle.push(value ? parseInt(value) : 0);
                 }
             }
-
+            console.log("PUZZLE")
+            console.log(puzzle)
             // For demo purposes, let's use a mock solver
             let solution = solve(puzzle); // Replace with actual solver logic
-
+            console.log("SOLUTION")
+            console.log(solution)
             // Display the solution
             let solutionTable = document.getElementById('solution-table');
             solutionTable.innerHTML = '';
