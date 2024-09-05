@@ -98,6 +98,11 @@
         #solution-table td:hover {
             background-color: #f1f1f1;
         }
+
+        #reveal-text-div {
+            margin: 20px
+        }
+
     </style>
 </head>
 <body>
@@ -127,6 +132,9 @@
         <button type="button" onclick="solveSudoku()">Solve Sudoku</button>
     </form>
     <h2>Solution:</h2>
+    <div id="reveal-text-div">
+        <!-- Text here -->
+    </div>
     <table id="solution-table">
         <tbody>
             <!-- Solution will be displayed here -->
@@ -229,7 +237,6 @@
                     }
                     solutionTable.appendChild(tr);
                 }
-            document.getElementById('solution-table').scrollIntoView({behavior: 'smooth'});
         }
         
         function addButton(){
@@ -242,6 +249,17 @@
                 button.onclick = function() {displaySolution(reveal=true)};
                 button.textContent = "Reveal all";
                 div.appendChild(button);
+            }
+        }
+        
+        function addText() {
+            if (!document.getElementById('reveal-text')) {
+                let div = document.getElementById('reveal-text-div');
+                text = document.createElement('text');
+                text.setAttribute('id', 'reveal-text');
+                text.textContent = "The solution is shown below. Click a cell to reveal its value. \
+                Click the button to show the entire solution.";
+                div.appendChild(text);
             }
         }
 
@@ -265,11 +283,16 @@
 
             // Display the solution
             if (solved) {
+
+                addText();
+                
                 solutionBoard = solution;
                 displaySolution();
                 
                 // button
                 addButton();
+                document.getElementById('reveal-button').scrollIntoView({behavior: 'smooth'});
+
 
             } else {
                 alert('No solution found.');
