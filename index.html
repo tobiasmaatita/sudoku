@@ -117,18 +117,20 @@
             return true;
         }
 
-        function solveSudoku(board) {
+        function solveTheSudoku(board) {
             for (let row = 0; row < 9; row++) {
                 for (let col = 0; col < 9; col++) {
                     if (board[row][col] === 0) {  // Empty cell found
                         for (let num = 1; num <= 9; num++) {  // Try digits 1-9
                             if (isValid(board, row, col, num)) {
                                 board[row][col] = num;
-                                const [solved, solution] = solveSudoku(board);
+                                console.log(`Trying ${num} at (${row}, ${col})`);
+                                const [solved, solution] = solveTheSudoku(board);
                                 if (solved) {
                                     return [true, solution];
                                 }
                                 board[row][col] = 0;  // Backtrack
+                                console.log(`Backtracking from (${row}, ${col})`);
                             }
                         }
                         return [false, null];  // Trigger backtracking
@@ -151,7 +153,7 @@
             }
 
             // Solve the Sudoku puzzle
-            const [solved, solution] = solveSudoku(board);
+            const [solved, solution] = solveTheSudoku(board);
 
             // Display the solution
             let solutionTable = document.getElementById('solution-table');
