@@ -83,22 +83,6 @@
     <h2>Solution:</h2>
     <table id="solution-table">
         <tbody>
-            <script>
-                let html_solution = '';
-                for (let row = 0; row < 9; row++) {
-                    html_solution += '<tr>';
-                    for (let col = 0; col < 9; col++) {
-                        let className = '';
-                        if (row % 3 === 0) className += '-thick-row';
-                        if (col % 3 === 0) className += '-thick-col';
-                        if (col === 8) className += '-right-most';
-                        if (row === 8) className += '-bottom-most';
-                        html_solution += `<td class="${className}"><input type="text" id="cell_${row}_${col}" maxlength="1"></td>`;
-                    }
-                    html_solution += '</tr>';
-                }
-                document.write(html_solution);
-            </script>
             <!-- Solution will be displayed here -->
         </tbody>
     </table>
@@ -132,9 +116,62 @@
         }
 
         function solve(puzzle) {
-            // Mock solver: Just returns the input puzzle for demonstration
-            return puzzle;
+            const [solved, solution] = solveTheSudoku(puzzle)
+            return solution;
         }
+
+        // Check if it's valid to place the number `num` at board[row][col]
+        function isValid(board, row, col, num) {
+            // Check the row
+            for (let i = 0; i < 9; i++) {
+                if (board[row][i] === num) {
+                    return false;
+                }
+            }
+
+            // Check the column
+            for (let i = 0; i < 9; i++) {
+                if (board[i][col] === num) {
+                    return false;
+                }
+            }
+
+            // Check the 3x3 subgrid
+            const startRow = 3 * Math.floor(row / 3);
+            const startCol = 3 * Math.floor(col / 3);
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    if (board[startRow + i][startCol + j] === num) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        // Solve the Sudoku using backtracking
+        function solveTheSudoku(board) {
+            for (let row = 0; row < 9; row++) {
+                for (let col = 0; col < 9; col++) {
+                    if (board[row][col] === 0) {  // Empty cell found
+                        for (let num = 1; num <= 9; num++) {  // Try digits 1-9
+                            if (isValid(board, row, col, num)) {
+                                board[row][col] = num;
+                                const [solved, solution] = solveSudoku(board);
+                                if (solved) {
+                                    return [true, solution];
+                                }
+                                board[row][col] = 0;  // Backtrack
+                            }
+                        }
+                        return [false, null];  // Trigger backtracking
+                    }
+                }
+            }
+            return [true, board];  // All cells are filled correctly
+        }
+
     </script>
 </body>
 </html>
