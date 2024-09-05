@@ -83,6 +83,22 @@
     <h2>Solution:</h2>
     <table id="solution-table">
         <tbody>
+            <script>
+                let html_solution = '';
+                for (let row = 0; row < 9; row++) {
+                    html_solution += '<tr>';
+                    for (let col = 0; col < 9; col++) {
+                        let className = '';
+                        if (row % 3 === 0) className += '-thick-row';
+                        if (col % 3 === 0) className += '-thick-col';
+                        if (col === 8) className += '-right-most';
+                        if (row === 8) className += '-bottom-most';
+                        html_solution += `<td class="${className}"><input type="text" id="cell_${row}_${col}" maxlength="1"></td>`;
+                    }
+                    html_solution += '</tr>';
+                }
+                document.write(html_solution);
+            </script>
             <!-- Solution will be displayed here -->
         </tbody>
     </table>
