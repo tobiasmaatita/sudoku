@@ -108,24 +108,11 @@
 <body>
     <h1>Sudoku Solver</h1>
     <form id="sudoku-form">
-        <table>
+        <table id="sudoku-grid">
             <tbody>
                 <!-- Generate a 9x9 grid -->
                 <script>
-                    let html = '';
-                    for (let row = 0; row < 9; row++) {
-                        html += '<tr>';
-                        for (let col = 0; col < 9; col++) {
-                            let className = '';
-                            if (row % 3 === 0) className += '-thick-row';
-                            if (col % 3 === 0) className += '-thick-col';
-                            if (col === 8) className += '-right-most';
-                            if (row === 8) className += '-bottom-most';
-                            html += `<td class="${className}"><input type="text" id="cell_${row}_${col}" maxlength="1" required></td>`;
-                        }
-                        html += '</tr>';
-                    }
-                    document.write(html);
+ 
                 </script>
             </tbody>
         </table>
@@ -145,36 +132,39 @@
     </div>
 
     <script>
+        const SIZE = 9;
         let solutionBoard = null; 
-        let inputPuzzle = Array(9).fill(null).map(() => Array(9).fill(0)); // Global variable to store the input board
+        let inputPuzzle = Array(SIZE).fill(null).map(() => Array(SIZE).fill(0)); // Global variable to store the input board
+        
+        function makeClassName(row, col) {
+            let className = '';
+            if (row % 3 === 0) className += '-thick-row';
+            if (col % 3 === 0) className += '-thick-col';
+            if (col === SIZE - 1) className += '-right-most';
+            if (row === SIZE - 1) className += '-bottom-most';
+            return className;
+        }
 
+        function CreateSudokuGrid() {
+            const tableBody = document.querySelector('#sudoku-grid tbody');
+            let html = '';
+            for (let row = 0; row < SIZE; row++) {
+                html += '<tr>';
+                for (let col = 0; col < SIZE; col++) {
+                    className = makeClassName(row, col);
+                    html += `<td class="${className}"><input type="text" id="cell_${row}_${col}" maxlength="1" required></td>`;
+                }
+                html += '</tr>';
+            }
+            tableBody.innerHTML = html;
+        }
+        
         function isValid(board, row, col, num) {
-            // Check the row
-            for (let i = 0; i < 9; i++) {
-                if (board[row][i] === num) {
-                    return false;
-                }
-            }
-
-            // Check the column
-            for (let i = 0; i < 9; i++) {
-                if (board[i][col] === num) {
-                    return false;
-                }
-            }
-
-            // Check the 3x3 subgrid
-            const startRow = 3 * Math.floor(row / 3);
-            const startCol = 3 * Math.floor(col / 3);
-            for (let i = 0; i < 3; i++) {
-                for (let j = 0; j < 3; j++) {
-                    if (board[startRow + i][startCol + j] === num) {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
+            // Check row, column and 3x3 subgrid
+            return !board[row].includes(num) &&
+                   !board.some(row => row[col] === num) &&
+                   !board.slice(3 * Math.floor(row / 3), 3 * Math.floor(row / 3) + 3)
+                         .some(r => r.slice(3 * Math.floor(col / 3), 3 * Math.floor(col / 3) + 3).includes(num));
         }
 
         function deepCopyBoard(board) {
@@ -182,10 +172,10 @@
         }
         
         function solveTheSudoku(board) {
-            for (let row = 0; row < 9; row++) {
-                for (let col = 0; col < 9; col++) {
+            for (let row = 0; row < SIZE; row++) {
+                for (let col = 0; col < SIZE; col++) {
                     if (board[row][col] === 0) {  // Empty cell found
-                        for (let num = 1; num <= 9; num++) {  // Try digits 1-9
+                        for (let num = 1; num <= SIZE; num++) {  // Try digits 1-9
                             if (isValid(board, row, col, num)) {
                                 board[row][col] = num;
                                 const [solved, solution] = solveTheSudoku(board);
@@ -205,20 +195,14 @@
         function displaySolution(reveal=false){
             let solutionTable = document.getElementById('solution-table');
             solutionTable.innerHTML = '';
-            for (let row = 0; row < 9; row++) {
+            for (let row = 0; row < SIZE; row++) {
                     let tr = document.createElement('tr');
                     for (let col = 0; col < 9; col++) {
-                        let className = '';
-                        if (row % 3 === 0) className += '-thick-row';
-                        if (col % 3 === 0) className += '-thick-col';
-                        if (col === 8) className += '-right-most';
-                        if (row === 8) className += '-bottom-most';
-
                         let td = document.createElement('td');
                         td.setAttribute("data-row", row);
                         td.setAttribute("data-col", col);
-                        td.className = className;
-                        if (inputPuzzle[row][col] != 0) {
+                        td.className = makeClassName(row, col);
+                        if (inputPuzzle[row][col] !== 0) {
                             td.textContent = inputPuzzle[row][col];
                             td.setAttribute('bgcolor', 'lightgrey')
                         }
@@ -243,7 +227,7 @@
             if (!document.getElementById('reveal-button')) {
 
                 let div = document.getElementById('reveal-button-div');
-                button = document.createElement('button');
+                let button = document.createElement('button');
                 button.setAttribute('type', 'button');
                 button.setAttribute('id', 'reveal-button');
                 button.onclick = function() {displaySolution(reveal=true)};
@@ -265,8 +249,8 @@
 
         function updateBoard() {
             // Update the inputBoard array based on input values
-            for (let row = 0; row < 9; row++) {
-                for (let col = 0; col < 9; col++) {
+            for (let row = 0; row < SIZE; row++) {
+                for (let col = 0; col < SIZE; col++) {
                     let value = document.getElementById(`cell_${row}_${col}`).value;
                     inputPuzzle[row][col] = value ? parseInt(value) : 0;
                 }
@@ -283,14 +267,12 @@
 
             // Display the solution
             if (solved) {
+                solutionBoard = solution;
 
                 addText();
-                
-                solutionBoard = solution;
                 displaySolution();
-                
-                // button
                 addButton();
+                
                 document.getElementById('reveal-button').scrollIntoView({behavior: 'smooth'});
 
 
@@ -299,6 +281,8 @@
                 document.getElementById('solution-table').innerHTML = '<tr><td colspan="9">No solution found.</td></tr>';
             }
         }
+        
+        CreateSudokuGrid();
     </script>
 </body>
 </html>
